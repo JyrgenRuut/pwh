@@ -4,7 +4,6 @@
 #include <vector>
 #include <string.h>
 #include <windows.h>
-#include <vector>
 #include "SHA1.h"
 #include "PW.h"
 #include "UserIO.h"
@@ -13,14 +12,13 @@ using namespace std;
 
 int main()
 {
-	char password[27];
 	vector<PW> siteList;
 	
 	UserIO userIO;
 	
 	userIO.populatePrefsList(siteList);
 	userIO.genHash(GEN_TYPE_MASTER_PASSWORD);
-	userIO.getMenu();
+	userIO.printMenu();
 	while(1) //main program loop
 	{
 		switch(userIO.getCommand())
@@ -36,10 +34,12 @@ int main()
 				break;
 			case CMD_HLP: case CMD_MNU:
 				cout << endl << endl << endl;
-				userIO.getMenu();
+				userIO.printMenu();
 				break;
 			case CMD_MOD:
-				
+				userIO.genHash(GEN_TYPE_SITE);
+				userIO.modifyPref(siteList);
+				break;
 			case CMD_DEL:
 				userIO.genHash(GEN_TYPE_SITE);
 				userIO.deletePrefsListEntry(siteList);
@@ -50,7 +50,7 @@ int main()
 				break;
 			default:
 				cout << endl << "Invalid command, please try again!" << endl;
-				userIO.getMenu();
+				userIO.printMenu();
 		}
 	}
 	

@@ -38,7 +38,7 @@ void UserIO::genHash(int TYPE)
 }
 
 
-void UserIO::getMenu() const
+void UserIO::printMenu() const
 {
 	std::cout <<"-gen : Generate password to clipboard for pasting"	<< std::endl <<
 				"-psw : Re-enter your Master Password." 			<< std::endl <<
@@ -136,7 +136,7 @@ void UserIO::genPassword(std::vector<PW>& list)
 {
 	int listPointer = findHash(list);
 	char password[(PASSWORD_HARD_MAX_LENGTH + 1)];
-	memset(password, 0, 41);
+	memset(password, 0, PASSWORD_HARD_MAX_LENGTH + 1);
 	
 	CSHA1 sha1;
 	sha1.Update((const unsigned char*) masterPasswordHash, HASH_STRING_SIZE);
@@ -191,4 +191,40 @@ void UserIO::savePrefs(std::vector<PW>& list)
 	return;
 }
 
+void UserIO::modifyPref(std::vector<PW>& list)
+{
+	char newMaxLen, newCapFlag;
+	getPrefs(&newCapFlag, &newMaxLen);
+	int modify = findHash(list);
+	
+	if(modify == 0)
+	{
+		PW newEntry(siteHash, newCapFlag, newMaxLen);
+		list.push_back(newEntry);
+	}
+	else
+	{
+		list[modify - 1].setCapFlag(newCapFlag);
+		list[modify - 1].setMaxLength(newMaxLen);
+	}
+	
+	return;
+}
+
+void UserIO::getPrefs(char* capflag, char* maxlen) 
+{
+	int temp;
+	
+	std::cout << std::endl << "Is a capital letter nessecary? 0 = no, 1 = yes	:	";
+	std::cin >> temp;
+	*capflag = (char)temp;
+	fflush(stdin);
+	std::cout << "If there is a maximum length for the password, set it here." << std::endl << "If the max length is longer than 40 or length is not limited, enter 0" << std::endl;
+	std::cin >> temp;
+	
+	if(temp == 0) {*maxlen = PASSWORD_HARD_MAX_LENGTH;}
+	else {*maxlen = (char)temp;}
+	
+	return;
+}
 

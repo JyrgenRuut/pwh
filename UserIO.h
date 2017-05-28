@@ -5,6 +5,7 @@
 #include <conio.h>
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
 #include <string.h>
 #include "PW.h"
 
@@ -34,17 +35,19 @@ private:
 	
 	void strToClipboard(char* str);
 	void capLastLetter(char*);
+	void getPrefs(char* capflag, char* maxlen);
 	
 public:
 	UserIO();
 	~UserIO();
 	
 	void genHash(int TYPE);
+	void printMenu() const;
 	void genPassword(std::vector<PW>&);
-	void getMenu() const;
 	void populatePrefsList(std::vector<PW>&);
 	void deletePrefsListEntry(std::vector<PW>&);
 	void savePrefs(std::vector<PW>&);
+	void modifyPref(std::vector<PW>&);
 	int getCommand();
 	
 };
