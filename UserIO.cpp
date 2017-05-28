@@ -211,6 +211,16 @@ void UserIO::modifyPref(std::vector<PW>& list)
 	return;
 }
 
+void UserIO::addPref(std::vector<PW>& list)
+{
+	char capflag, maxlen;
+	getPrefs(&capflag, &maxlen);
+	PW newEntry(siteHash, capflag, maxlen);
+	list.push_back(newEntry);
+	
+	return;
+}
+
 void UserIO::getPrefs(char* capflag, char* maxlen) 
 {
 	int temp;

@@ -48,6 +48,7 @@ public:
 	void deletePrefsListEntry(std::vector<PW>&);
 	void savePrefs(std::vector<PW>&);
 	void modifyPref(std::vector<PW>&);
+	void addPref(std::vector<PW>&);
 	int getCommand();
 	
 };

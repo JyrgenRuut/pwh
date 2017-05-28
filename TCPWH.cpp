@@ -28,7 +28,9 @@ int main()
 				userIO.genPassword(siteList);
 				break;
 			case CMD_ADD:
-				
+				userIO.genHash(GEN_TYPE_SITE);
+				userIO.addPref(siteList);
+				break;
 			case CMD_PSW:
 				userIO.genHash(GEN_TYPE_MASTER_PASSWORD);
 				break;
