@@ -3,7 +3,8 @@
 
 UserIO::UserIO()
 {
-	memset(&masterPasswordHash, 0, HASH_STRING_SIZE);
+	memset(masterPasswordHash, 0, HASH_STRING_SIZE);
+	memset(siteHash, 0, HASH_STRING_SIZE);
 }
 
 UserIO::~UserIO(){}
@@ -88,14 +89,14 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 {
 	char byteIn;
 	int listCounter = 0;
-	char tempHash[21];
+	char tempHash[HASH_STRING_SIZE];
 	char capFlag;
 	char maxLength;
 	
 	FILE* fi = fopen(".siteprefs", "r");
 	if(fi == NULL)
 	{
-		printf("\nsite preferences file missing, creating a new one.\n");
+		printf("\nSite preferences file missing, creating a new one.\n");
 		FILE* fgen = fopen(".siteprefs", "w");
 		fclose(fgen);
 		return;
@@ -105,7 +106,7 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	{
 		byteIn = fgetc(fi);
 		if(byteIn == EOF) {break;}
-		for(int i = 0; i <=21; ++i)
+		for(int i = 0; i <= HASH_STRING_SIZE; ++i)
 		{
 			tempHash[i] = byteIn;
 			byteIn = fgetc(fi);
@@ -170,7 +171,23 @@ void UserIO::capLastLetter(char* str)
 void UserIO::deletePrefsListEntry(std::vector<PW>& list)
 {
 	int toDelete = findHash(list);
-	list.erase(list.begin() + (toDelete - 1));
+	if(toDelete != 0) {list.erase(list.begin() + (toDelete - 1));}
+	return;
+}
+
+void UserIO::savePrefs(std::vector<PW>& list)
+{
+	FILE* fo = fopen(".siteprefs", "w");
+	for(int i = (list.size() - 1); i >= 0; --i)
+	{
+		for(int j = 0; j < HASH_STRING_SIZE; ++j)
+		{
+			fputc(*(list[i].getSiteHash() + j), fo);
+		}
+		fputc(list[i].getCapFlag(), fo);
+		fputc(list[i].getMaxLength(), fo);
+	}
+	
 	return;
 }
 

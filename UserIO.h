@@ -44,6 +44,7 @@ public:
 	void getMenu() const;
 	void populatePrefsList(std::vector<PW>&);
 	void deletePrefsListEntry(std::vector<PW>&);
+	void savePrefs(std::vector<PW>&);
 	int getCommand();
 	
 };

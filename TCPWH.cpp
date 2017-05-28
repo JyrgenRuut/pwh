@@ -43,8 +43,11 @@ int main()
 			case CMD_DEL:
 				userIO.genHash(GEN_TYPE_SITE);
 				userIO.deletePrefsListEntry(siteList);
+				break;
 			case CMD_EXT:
-				
+				userIO.savePrefs(siteList);
+				return 0;
+				break;
 			default:
 				cout << endl << "Invalid command, please try again!" << endl;
 				userIO.getMenu();
