@@ -18,6 +18,8 @@
 #define CMD_MNU 7
 #define CMD_EXT 8
 
+#define GEN_TYPE_MASTER_PASSWORD 1
+#define GEN_TYPE_SITE 2
 
 
 #ifndef USERIO_H
@@ -29,9 +31,8 @@ public:
 	UserIO();
 	~UserIO();
 	
-	void genMasterPasswordHash();
-	void genHash(char*);
-	void genPassword(char*, char*, std::vector<PW>&);
+	void genHash(int TYPE);
+	void genPassword(std::vector<PW>&);
 	void getMenu() const;
 	void populatePrefsList(std::vector<PW>&);
 	int findHash(char*, std::vector<PW>&);
@@ -42,6 +43,7 @@ public:
 	char* getMasterPasswordHash();
 private:
 	char masterPasswordHash[HASH_STRING_SIZE];
+	char siteHash[HASH_STRING_SIZE];
 	
 	void strToClipboard(char* str);
 	void capLastLetter(char*);

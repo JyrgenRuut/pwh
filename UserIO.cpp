@@ -8,14 +8,15 @@ UserIO::UserIO()
 
 UserIO::~UserIO(){}
 
-void UserIO::genMasterPasswordHash()
+void UserIO::genHash(int TYPE)
 {
 	char* destination = getMasterPasswordHash();
 	char charIn;
 	char pw[51];
 	int i = 0;
 	CSHA1 sha1;
-	printf("Enter your Master Password: ");
+	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {printf("Enter your Master Password: ");}
+	else if(TYPE == GEN_TYPE_SITE) {printf("Enter site name: ");}
 	charIn = _getch();
 	while(charIn != 13 && i < 50)
 	{
@@ -26,7 +27,7 @@ void UserIO::genMasterPasswordHash()
 	}
 	pw[51] = '\0';
 	putchar('\n');
-	if(i == 0){printf("You decided to not enter a master password, this is\nconsidered unsafe! It is highly recommended\nthat you enter -pw and re-enter your\nMaster Password!\n");}
+	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {if(i == 0){printf("You decided to not enter a master password, this is\nconsidered unsafe! It is highly recommended\nthat you enter -pw and re-enter your\nMaster Password!\n");}}
 	sha1.Update((const unsigned char*)pw, strlen(pw));
 	sha1.Final();
 	sha1.GetHash((unsigned char*)destination);
@@ -34,29 +35,6 @@ void UserIO::genMasterPasswordHash()
 	return;
 }
 
-void UserIO::genHash(char* destination)
-{
-	char charIn;
-	char str[51];
-	int i = 0;
-	CSHA1 sha1;
-	printf("Enter the site name: ");
-	charIn = _getch();
-	while(charIn != 13 && i < 50)
-	{
-		str[i] = charIn;
-		putchar('*');
-		++i;
-		charIn = _getch();
-	}
-	str[51] = '\0';
-	putchar('\n');
-	sha1.Update((const unsigned char*)str, strlen(str));
-	sha1.Final();
-	sha1.GetHash((unsigned char*)destination);
-	sha1.~CSHA1();
-	return;
-}
 
 void UserIO::getMenu() const
 {
@@ -152,14 +130,14 @@ int UserIO::findHash(char* toFind, std::vector<PW>& list)
 	return 0;
 }
 
-void UserIO::genPassword(char* masterPWhash, char* siteHash, std::vector<PW>& list)
+void UserIO::genPassword(std::vector<PW>& list)
 {
 	int listPointer = findHash(siteHash, list);
 	char password[(PASSWORD_HARD_MAX_LENGTH + 1)];
 	memset(password, 0, 41);
 	
 	CSHA1 sha1;
-	sha1.Update((const unsigned char*) masterPWhash, HASH_STRING_SIZE);
+	sha1.Update((const unsigned char*) masterPasswordHash, HASH_STRING_SIZE);
 	sha1.Update((const unsigned char*) siteHash, HASH_STRING_SIZE);
 	sha1.ReportHash(password, CSHA1::REPORT_HEX_SHORT);
 	password[PASSWORD_HARD_MAX_LENGTH] = '\0';

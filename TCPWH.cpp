@@ -13,25 +13,26 @@ using namespace std;
 
 int main()
 {
-	char siteHash[21];
 	char password[27];
 	vector<PW> siteList;
 	
 	UserIO userIO;
 	
 	userIO.populatePrefsList(siteList);
-	userIO.genMasterPasswordHash();
+	userIO.genHash(GEN_TYPE_MASTER_PASSWORD);
 	userIO.getMenu();
 	while(1) //main program loop
 	{
 		switch(userIO.getCommand())
 		{
 			case CMD_GEN:
-				
+				userIO.genHash(GEN_TYPE_SITE);
+				userIO.genPassword(siteList);
+				break;
 			case CMD_ADD:
 				
 			case CMD_PSW:
-				userIO.genMasterPasswordHash();
+				userIO.genHash(GEN_TYPE_MASTER_PASSWORD);
 				break;
 			case CMD_HLP: case CMD_MNU:
 				cout << endl << endl << endl;
