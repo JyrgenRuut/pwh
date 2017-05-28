@@ -1,5 +1,6 @@
 #include "UserIO.h"
 
+
 UserIO::UserIO()
 {
 	memset(&masterPasswordHash, 0, HASH_STRING_SIZE);
@@ -110,7 +111,7 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	int listCounter = 0;
 	char tempHash[21];
 	char capFlag;
-	char symbFlag;
+	char maxLength;
 	
 	FILE* fi = fopen(".siteprefs", "r");
 	if(fi == NULL)
@@ -132,17 +133,17 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 			if(byteIn == EOF) {goto END;}
 		}
 		capFlag = byteIn;
-		symbFlag = fgetc(fi);
-		if(symbFlag == EOF) {break;}
+		maxLength = fgetc(fi);
+		if(maxLength == EOF) {break;}
 		
-		PW element(tempHash, capFlag, symbFlag);
+		PW element(tempHash, capFlag, maxLength);
 		list.push_back(element);
 		++listCounter;
 	}
 	END: return;
 }
 
-int findHash(char* toFind, std::vector<PW>& list)
+int UserIO::findHash(char* toFind, std::vector<PW>& list)
 {
 	for(int i = list.size(); i > 0; --i)
 	{
@@ -151,6 +152,41 @@ int findHash(char* toFind, std::vector<PW>& list)
 	return 0;
 }
 
+void UserIO::genPassword(char* masterPWhash, char* siteHash, std::vector<PW>& list)
+{
+	int listPointer = findHash(siteHash, list);
+	char password[(PASSWORD_HARD_MAX_LENGTH + 1)];
+	memset(password, 0, 41);
+	
+	CSHA1 sha1;
+	sha1.Update((const unsigned char*) masterPWhash, HASH_STRING_SIZE);
+	sha1.Update((const unsigned char*) siteHash, HASH_STRING_SIZE);
+	sha1.ReportHash(password, CSHA1::REPORT_HEX_SHORT);
+	password[PASSWORD_HARD_MAX_LENGTH] = '\0';
+	sha1.~CSHA1();
+	
+	if(listPointer == 0) {strToClipboard(password);}
+	else
+	{
+		char needsCap = list[listPointer].getCapFlag();
+		char maxLength = list[listPointer].getMaxLength();
+		if(needsCap > 0) {capLastLetter(password);}
+		if((unsigned char)maxLength < PASSWORD_HARD_MAX_LENGTH) {memset((password + maxLength), 0, (PASSWORD_HARD_MAX_LENGTH - maxLength));}
+		strToClipboard(password);
+	}
+	std::cout << "Password successfully added to your clipboard!" << std::endl;
+	
+	return;
+}
+
+void UserIO::capLastLetter(char* str)
+{
+	for(int i = (strlen(str) - 1); i >= 0; --i)
+	{
+		if(*(str + i) > 60) {*(str + i) -= 0x20; break;}
+	}
+	return;
+}
 
 
 char* UserIO::getMasterPasswordHash()

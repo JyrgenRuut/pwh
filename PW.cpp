@@ -5,15 +5,14 @@ PW::PW()
 {
 	memset(siteHash, 0, HASH_STRING_SIZE);
 	needsCap = 1;
-	noSpecSymb = 0;
-	maxLength = 27;
+	maxLength = PASSWORD_HARD_MAX_LENGTH;
 }
 
-PW::PW(char* newHash, char needCapFlag, char noSpecSymbFlag)
+PW::PW(char* newHash, char needCapFlag, char newMaxLength)
 {
 	copyString(siteHash, newHash);
 	needsCap = needCapFlag;
-	noSpecSymb = noSpecSymbFlag;
+	maxLength = newMaxLength;
 }
 
 PW::~PW(){}
@@ -28,9 +27,10 @@ char PW::getCapFlag() const
 {
 	return needsCap;
 }
-char PW::getSymbolsFlag() const
+
+char PW::getMaxLength() const
 {
-	return noSpecSymb;
+	return maxLength;
 }
 
 //modifiers
@@ -42,10 +42,12 @@ void PW::setCapFlag(char newFlag)
 {
 	needsCap = newFlag;
 }
-void PW::setSymbolFlag(char newFlag)
+
+void PW::setMaxLength(char newMaxLength)
 {
-	noSpecSymb = newFlag;
+	maxLength = newMaxLength;
 }
+
 
 void PW::copyString(char* s1, char* s2)
 {
