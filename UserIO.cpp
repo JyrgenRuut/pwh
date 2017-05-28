@@ -2,7 +2,7 @@
 
 UserIO::UserIO()
 {
-	memset(&masterPasswordHash, 0, 21);
+	memset(&masterPasswordHash, 0, HASH_STRING_SIZE);
 }
 
 UserIO::~UserIO(){}
@@ -93,14 +93,14 @@ int UserIO::getCommand()
 	char input[5];
 	fgets(input, 5, stdin);
 	fflush(stdin);
-	if(strcmp(input, "-gen")){return CMD_GEN;}
-	else if(strcmp(input, "-add")){return CMD_ADD;}
-	else if(strcmp(input, "-psw")){return CMD_PSW;}
-	else if(strcmp(input, "-hlp")){return CMD_HLP;}
-	else if(strcmp(input, "-mnu")){return CMD_MNU;}
-	else if(strcmp(input, "-del")){return CMD_DEL;}
-	else if(strcmp(input, "-mod")){return CMD_MOD;}
-	else if(strcmp(input, "-ext")){return CMD_EXT;}
+	if(!strcmp(input, "-gen")){return CMD_GEN;}
+	else if(!strcmp(input, "-add")){return CMD_ADD;}
+	else if(!strcmp(input, "-psw")){return CMD_PSW;}
+	else if(!strcmp(input, "-hlp")){return CMD_HLP;}
+	else if(!strcmp(input, "-mnu")){return CMD_MNU;}
+	else if(!strcmp(input, "-del")){return CMD_DEL;}
+	else if(!strcmp(input, "-mod")){return CMD_MOD;}
+	else if(!strcmp(input, "-ext")){return CMD_EXT;}
 	return 0;
 }
 
@@ -133,6 +133,7 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 		}
 		capFlag = byteIn;
 		symbFlag = fgetc(fi);
+		if(symbFlag == EOF) {break;}
 		
 		PW element(tempHash, capFlag, symbFlag);
 		list.push_back(element);
@@ -141,6 +142,14 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	END: return;
 }
 
+int findHash(char* toFind, std::vector<PW>& list)
+{
+	for(int i = list.size(); i > 0; --i)
+	{
+		if(!strcmp(toFind, list[i].getSiteHash())) {return i;}
+	}
+	return 0;
+}
 
 
 

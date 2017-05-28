@@ -32,11 +32,12 @@ public:
 	void getMenu() const;
 	void strToClipboard(char* str);
 	void populatePrefsList(std::vector<PW>&);
+	int findHash(char*, std::vector<PW>&);
 	int getCommand();
 	
 	//Accessors
 	char* getMasterPasswordHash();
 private:
-	char masterPasswordHash[21];
+	char masterPasswordHash[HASH_STRING_SIZE];
 };
 #endif

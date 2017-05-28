@@ -19,6 +19,7 @@ int main()
 	
 	UserIO userIO;
 	
+	userIO.populatePrefsList(siteList);
 	userIO.genMasterPasswordHash();
 	userIO.getMenu();
 	while(1) //main program loop

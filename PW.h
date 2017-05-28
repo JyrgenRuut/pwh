@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <string.h>
 #include <iostream>
+
+#define HASH_STRING_SIZE 21
 
 #ifndef PW_H
 	#define PW_H
@@ -7,9 +10,10 @@
 class PW 
 {
 private:
-	char siteHash[21];
+	char siteHash[HASH_STRING_SIZE];
 	char needsCap;
 	char noSpecSymb;
+	char maxLength;
 	void copyString(char*, char*);		//@param1: destination; @param2: source;
 public:
 	//(de)constructors
@@ -17,7 +21,7 @@ public:
 	~PW();
 	PW(char*, char, char);
 	//accessors
-	void getSiteHash(char*);
+	char* getSiteHash();
 	char getCapFlag() const;
 	char getSymbolsFlag() const;
 	//modifiers

@@ -3,8 +3,10 @@
 
 PW::PW()
 {
+	memset(siteHash, 0, HASH_STRING_SIZE);
 	needsCap = 1;
 	noSpecSymb = 0;
+	maxLength = 27;
 }
 
 PW::PW(char* newHash, char needCapFlag, char noSpecSymbFlag)
@@ -17,9 +19,9 @@ PW::PW(char* newHash, char needCapFlag, char noSpecSymbFlag)
 PW::~PW(){}
 
 //accessors
-void PW::getSiteHash(char* destination)
+char* PW::getSiteHash()
 {
-	copyString(destination, siteHash);
+	return siteHash;
 }
 
 char PW::getCapFlag() const
@@ -60,5 +62,5 @@ void PW::copyString(char* s1, char* s2)
 			*(s1 + i) = '\0';
 		}
 	}
-	*(s1 + 21) = '\0';
+	*(s1 + HASH_STRING_SIZE) = '\0';
 }
