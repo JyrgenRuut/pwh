@@ -5,8 +5,7 @@ UserIO::UserIO()
 	memset(&masterPasswordHash, 0, 21);
 }
 
-User:IO::~UserIO(){}
-
+UserIO::~UserIO(){}
 
 void UserIO::genMasterPasswordHash()
 {
@@ -105,7 +104,42 @@ int UserIO::getCommand()
 	return 0;
 }
 
-
+void UserIO::populatePrefsList(std::vector<PW>& list)
+{
+	char byteIn;
+	int listCounter = 0;
+	char tempHash[21];
+	char capFlag;
+	char symbFlag;
+	
+	FILE* fi = fopen(".siteprefs", "r");
+	if(fi == NULL)
+	{
+		printf("\nsite preferences file missing, creating a new one.\n");
+		FILE* fgen = fopen(".siteprefs", "w");
+		fclose(fgen);
+		return;
+	}
+	
+	while(1)
+	{
+		byteIn = fgetc(fi);
+		if(byteIn == EOF) {break;}
+		for(int i = 0; i <=21; ++i)
+		{
+			tempHash[i] = byteIn;
+			byteIn = fgetc(fi);
+			if(byteIn == EOF) {goto END;}
+		}
+		capFlag = byteIn;
+		symbFlag = fgetc(fi);
+		
+		PW element(tempHash, capFlag, symbFlag);
+		list.push_back(element);
+		++listCounter;
+	}
+	END: return;
+}
 
 
 

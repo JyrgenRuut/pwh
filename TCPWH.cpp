@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <iostream>
+#include <vector>
 #include <string.h>
 #include <windows.h>
 #include <vector>
@@ -14,7 +15,7 @@ int main()
 {
 	char siteHash[21];
 	char password[27];
-	
+	vector<PW> siteList;
 	
 	UserIO userIO;
 	
