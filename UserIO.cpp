@@ -10,13 +10,14 @@ UserIO::~UserIO(){}
 
 void UserIO::genHash(int TYPE)
 {
-	char* destination = getMasterPasswordHash();
+	char* destination;
+	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {printf("Enter your Master Password: "); destination = masterPasswordHash;}
+	else if(TYPE == GEN_TYPE_SITE) {printf("Enter site name: "); destination = siteHash;}
 	char charIn;
 	char pw[51];
 	int i = 0;
 	CSHA1 sha1;
-	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {printf("Enter your Master Password: ");}
-	else if(TYPE == GEN_TYPE_SITE) {printf("Enter site name: ");}
+	
 	charIn = _getch();
 	while(charIn != 13 && i < 50)
 	{
@@ -121,18 +122,18 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	END: return;
 }
 
-int UserIO::findHash(char* toFind, std::vector<PW>& list)
+int UserIO::findHash(std::vector<PW>& list)
 {
 	for(int i = list.size(); i > 0; --i)
 	{
-		if(!strcmp(toFind, list[i].getSiteHash())) {return i;}
+		if(!strcmp(siteHash, list[i].getSiteHash())) {return i;}
 	}
 	return 0;
 }
 
 void UserIO::genPassword(std::vector<PW>& list)
 {
-	int listPointer = findHash(siteHash, list);
+	int listPointer = findHash(list);
 	char password[(PASSWORD_HARD_MAX_LENGTH + 1)];
 	memset(password, 0, 41);
 	
@@ -166,8 +167,11 @@ void UserIO::capLastLetter(char* str)
 	return;
 }
 
-
-char* UserIO::getMasterPasswordHash()
+void UserIO::deletePrefsListEntry(std::vector<PW>& list)
 {
-	return masterPasswordHash;
+	int toDelete = findHash(list);
+	list.erase(list.begin() + (toDelete - 1));
+	return;
 }
+
+

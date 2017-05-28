@@ -41,7 +41,8 @@ int main()
 			case CMD_MOD:
 				
 			case CMD_DEL:
-				
+				userIO.genHash(GEN_TYPE_SITE);
+				userIO.deletePrefsListEntry(siteList);
 			case CMD_EXT:
 				
 			default:
