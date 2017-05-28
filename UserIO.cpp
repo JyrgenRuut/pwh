@@ -1,7 +1,16 @@
 #include "UserIO.h"
 
-void UserIO::getMasterPasswordHash(char* destination)
+UserIO::UserIO()
 {
+	memset(&masterPasswordHash, 0, 21);
+}
+
+User:IO::~UserIO(){}
+
+
+void UserIO::genMasterPasswordHash()
+{
+	char* destination = getMasterPasswordHash();
 	char charIn;
 	char pw[51];
 	int i = 0;
@@ -25,7 +34,7 @@ void UserIO::getMasterPasswordHash(char* destination)
 	return;
 }
 
-void UserIO::getHash(char* destination)
+void UserIO::genHash(char* destination)
 {
 	char charIn;
 	char str[51];
@@ -51,13 +60,57 @@ void UserIO::getHash(char* destination)
 
 void UserIO::getMenu() const
 {
-	std::cout <<"-gen : generate password to clipboard for pasting"	<< std::endl <<
-				"-psw : re-enter your Master Password." 			<< std::endl <<
-				"-add : add a new site's preferences."				<< std::endl <<
-				"-del : delete a site's preferences." 				<< std::endl <<
-				"-mod : modify an existing site's preferences."		<< std::endl << 
+	std::cout <<"-gen : Generate password to clipboard for pasting"	<< std::endl <<
+				"-psw : Re-enter your Master Password." 			<< std::endl <<
+				"-add : Add a new site's preferences."				<< std::endl <<
+				"-del : Delete a site's preferences." 				<< std::endl <<
+				"-mod : Modify an existing site's preferences."		<< std::endl << 
 				"-hlp : Opens up this menu."						<< std::endl <<
-				"-mnu : Opens up this menu."						<< std::endl << std::endl;
+				"-mnu : Opens up this menu."						<< std::endl <<
+				"-ext : Exits the program."							<< std::endl << std::endl;
+	return;
+}
+
+void UserIO::strToClipboard(char* str)
+{
+	OpenClipboard(0);
+	EmptyClipboard();	
+	HGLOBAL hg = GlobalAlloc(GMEM_MOVEABLE, strlen(str));
+	if (!hg)
+	{
+		CloseClipboard();
+		return;
+	}
+	memcpy(GlobalLock(hg), str, strlen(str) + 1);
+	GlobalUnlock(hg);
+	SetClipboardData(CF_TEXT, hg);
+	CloseClipboard();
+	GlobalFree(hg);
+	return;
+}
+
+int UserIO::getCommand()
+{
+	char input[5];
+	fgets(input, 5, stdin);
+	fflush(stdin);
+	if(strcmp(input, "-gen")){return CMD_GEN;}
+	else if(strcmp(input, "-add")){return CMD_ADD;}
+	else if(strcmp(input, "-psw")){return CMD_PSW;}
+	else if(strcmp(input, "-hlp")){return CMD_HLP;}
+	else if(strcmp(input, "-mnu")){return CMD_MNU;}
+	else if(strcmp(input, "-del")){return CMD_DEL;}
+	else if(strcmp(input, "-mod")){return CMD_MOD;}
+	else if(strcmp(input, "-ext")){return CMD_EXT;}
+	return 0;
 }
 
 
+
+
+
+
+char* UserIO::getMasterPasswordHash()
+{
+	return masterPasswordHash;
+}
