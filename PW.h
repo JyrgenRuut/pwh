@@ -1,4 +1,5 @@
-#include <string.h>
+#include <stdio.h>
+#include <iostream>
 
 #ifndef PW_H
 	#define PW_H
@@ -17,8 +18,8 @@ public:
 	PW(char*, char, char);
 	//accessors
 	void getSiteHash(char*);
-	char getCapFlag();
-	char getSymbolsFlag();
+	char getCapFlag() const;
+	char getSymbolsFlag() const;
 	//modifiers
 	void setSiteHash(char*);
 	void setCapFlag(char);
