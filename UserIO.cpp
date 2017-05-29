@@ -34,6 +34,8 @@ void UserIO::genHash(int TYPE)
 	sha1.Final();
 	sha1.GetHash((unsigned char*)destination);
 	sha1.~CSHA1();
+	printf("%s\n", destination);
+	
 	return;
 }
 
@@ -137,10 +139,10 @@ void UserIO::genPassword(std::vector<PW>& list)
 	int listPointer = findHash(list);
 	char password[(PASSWORD_HARD_MAX_LENGTH + 1)];
 	memset(password, 0, PASSWORD_HARD_MAX_LENGTH + 1);
-	
 	CSHA1 sha1;
-	sha1.Update((const unsigned char*) masterPasswordHash, HASH_STRING_SIZE);
-	sha1.Update((const unsigned char*) siteHash, HASH_STRING_SIZE);
+	sha1.Update((const unsigned char*)masterPasswordHash, HASH_STRING_SIZE);
+	sha1.Update((const unsigned char*)siteHash, HASH_STRING_SIZE);
+	sha1.Final();
 	sha1.ReportHash(password, CSHA1::REPORT_HEX_SHORT);
 	password[PASSWORD_HARD_MAX_LENGTH] = '\0';
 	sha1.~CSHA1();
@@ -150,8 +152,9 @@ void UserIO::genPassword(std::vector<PW>& list)
 	{
 		char needsCap = list[listPointer].getCapFlag();
 		char maxLength = list[listPointer].getMaxLength();
-		if(needsCap > 0) {capLastLetter(password);}
+		if(needsCap > 0) {decapLastLetter(password);}
 		if((unsigned char)maxLength < PASSWORD_HARD_MAX_LENGTH) {memset((password + maxLength), 0, (PASSWORD_HARD_MAX_LENGTH - maxLength));}
+		printf("%s\n", password);
 		strToClipboard(password);
 	}
 	std::cout << "Password successfully added to your clipboard!" << std::endl;
@@ -159,11 +162,11 @@ void UserIO::genPassword(std::vector<PW>& list)
 	return;
 }
 
-void UserIO::capLastLetter(char* str)
+void UserIO::decapLastLetter(char* str)
 {
 	for(int i = (strlen(str) - 1); i >= 0; --i)
 	{
-		if(*(str + i) > 60) {*(str + i) -= 0x20; break;}
+		if(*(str + i) < 61) {*(str + i) += 0x20; break;}
 	}
 	return;
 }
@@ -225,11 +228,13 @@ void UserIO::getPrefs(char* capflag, char* maxlen)
 {
 	int temp;
 	
-	std::cout << std::endl << "Is a capital letter nessecary? 0 = no, 1 = yes	:	";
+	std::cout << std::endl << "Is a non-capitalized letter nessecary? 0 = no, 1 = yes	:	";
 	std::cin >> temp;
 	*capflag = (char)temp;
 	fflush(stdin);
-	std::cout << "If there is a maximum length for the password, set it here." << std::endl << "If the max length is longer than 40 or length is not limited, enter 0" << std::endl;
+	std::cout << std::endl << 	"If there is a maximum length for the password, set it here."			<< std::endl << 
+								"If the max length is longer than 40 or length is not limited, enter 0"	<< std::endl <<
+								"Maximum password length: ";
 	std::cin >> temp;
 	
 	if(temp == 0) {*maxlen = PASSWORD_HARD_MAX_LENGTH;}

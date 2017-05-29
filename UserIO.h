@@ -31,16 +31,17 @@ class UserIO
 private:
 	char masterPasswordHash[HASH_STRING_SIZE];
 	char siteHash[HASH_STRING_SIZE];
-	int findHash(std::vector<PW>&);
 	
+	int findHash(std::vector<PW>&);
 	void strToClipboard(char* str);
-	void capLastLetter(char*);
+	void decapLastLetter(char*);
 	void getPrefs(char* capflag, char* maxlen);
 	
 public:
 	UserIO();
 	~UserIO();
 	
+	int getCommand();
 	void genHash(int TYPE);
 	void printMenu() const;
 	void genPassword(std::vector<PW>&);
@@ -49,7 +50,6 @@ public:
 	void savePrefs(std::vector<PW>&);
 	void modifyPref(std::vector<PW>&);
 	void addPref(std::vector<PW>&);
-	int getCommand();
 	
 };
 #endif
