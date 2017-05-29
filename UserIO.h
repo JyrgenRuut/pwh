@@ -21,6 +21,7 @@
 
 #define GEN_TYPE_MASTER_PASSWORD 1
 #define GEN_TYPE_SITE 2
+#define HASH_FIND_FAILED -1
 
 
 #ifndef USERIO_H

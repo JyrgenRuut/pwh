@@ -107,7 +107,10 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	
 	while(1)
 	{
+		fseek(fi, 1, SEEK_CUR);		//Checks to see if there is any more data expected
 		if(feof(fi)) {break;}
+		fseek(fi, -1, SEEK_CUR);
+	
 		fread(tempHash, 1, HASH_STRING_SIZE, fi);
 		capFlag = fgetc(fi);
 		if(capFlag == EOF) {break;}
@@ -125,11 +128,11 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 
 int UserIO::findHash(std::vector<PW>& list)
 {
-	for(int i = list.size(); i > 0; --i)
+	for(int i = list.size() - 1; i >= 0; --i)
 	{
-		if(strcmp(siteHash, list[i - 1].getSiteHash()) == 0) {return i;}
+		if(strcmp(siteHash, list[i].getSiteHash()) == 0) {return i;}
 	}
-	return 0;
+	return HASH_FIND_FAILED;
 }
 
 void UserIO::genPassword(std::vector<PW>& list)
@@ -145,7 +148,7 @@ void UserIO::genPassword(std::vector<PW>& list)
 	password[PASSWORD_HARD_MAX_LENGTH] = '\0';
 	sha1.~CSHA1();
 	
-	if(listPointer == 0) {strToClipboard(password);}
+	if(listPointer == HASH_FIND_FAILED) {strToClipboard(password);}
 	else
 	{
 		char needsCap = list[listPointer].getCapFlag();
@@ -172,7 +175,7 @@ void UserIO::decapLastLetter(char* str)
 void UserIO::deletePrefsListEntry(std::vector<PW>& list)
 {
 	int toDelete = findHash(list);
-	if(toDelete != 0) {list.erase(list.begin() + (toDelete - 1));}
+	if(toDelete != HASH_FIND_FAILED) {list.erase(list.begin() + toDelete);}
 	return;
 }
 
@@ -195,15 +198,15 @@ void UserIO::modifyPref(std::vector<PW>& list)
 	getPrefs(&newCapFlag, &newMaxLen);
 	int modify = findHash(list);
 	
-	if(modify == 0)
+	if(modify == HASH_FIND_FAILED)
 	{
 		PW newEntry(siteHash, newCapFlag, newMaxLen);
 		list.push_back(newEntry);
 	}
 	else
 	{
-		list[modify - 1].setCapFlag(newCapFlag);
-		list[modify - 1].setMaxLength(newMaxLen);
+		list[modify].setCapFlag(newCapFlag);
+		list[modify].setMaxLength(newMaxLen);
 	}
 	
 	return;
