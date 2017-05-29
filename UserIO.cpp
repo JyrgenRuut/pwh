@@ -1,6 +1,5 @@
 #include "UserIO.h"
 
-
 UserIO::UserIO()
 {
 	memset(masterPasswordHash, 0, HASH_STRING_SIZE);
@@ -214,9 +213,18 @@ void UserIO::modifyPref(std::vector<PW>& list)
 void UserIO::addPref(std::vector<PW>& list)
 {
 	char capflag, maxlen;
-	getPrefs(&capflag, &maxlen);
-	PW newEntry(siteHash, capflag, maxlen);
-	list.push_back(newEntry);
+	int p;
+	p = findHash(list);
+	if(p != HASH_FIND_FAILED)
+	{
+		modifyPref(list);
+	}
+	else
+	{
+		getPrefs(&capflag, &maxlen); 
+		PW newEntry(siteHash, capflag, maxlen);
+		list.push_back(newEntry);
+	}
 	
 	return;
 }

@@ -1,6 +1,5 @@
 #include "PW.h"
 
-
 PW::PW()
 {
 	memset(siteHash, 0, HASH_STRING_SIZE);

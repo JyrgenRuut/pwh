@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include <string.h>
-#include <iostream>
 
 #define HASH_STRING_SIZE 21
 #define PASSWORD_HARD_MAX_LENGTH 40

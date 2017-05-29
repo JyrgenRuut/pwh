@@ -13,12 +13,12 @@ using namespace std;
 int main()
 {
 	vector<PW> siteList;
-	
 	UserIO userIO;
 	
 	userIO.populatePrefsList(siteList);
 	userIO.genHash(GEN_TYPE_MASTER_PASSWORD);
 	userIO.printMenu();
+	
 	while(1) 								//main program loop
 	{
 		switch(userIO.getCommand())
@@ -54,7 +54,6 @@ int main()
 				userIO.printMenu();
 		}
 	}
-	
 	return 0;
 }
 

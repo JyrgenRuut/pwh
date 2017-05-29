@@ -1,15 +1,13 @@
-#include <stdio.h>
-#include <iostream>
-#include <windows.h>
-#include "SHA1.h"
-#include <conio.h>
-#include <iostream>
-#include <vector>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
+#include <windows.h>
+#include <iostream>
+#include <vector>
+#include "SHA1.h"
 #include "PW.h"
 
-
+//Define menu commands
 #define CMD_GEN 1
 #define CMD_PSW 2
 #define CMD_ADD 3
@@ -19,9 +17,10 @@
 #define CMD_MNU 7
 #define CMD_EXT 8
 
-#define GEN_TYPE_MASTER_PASSWORD 1
-#define GEN_TYPE_SITE 2
-#define HASH_FIND_FAILED -1
+//various other macros
+#define GEN_TYPE_MASTER_PASSWORD 1		/*	used to tell genHash function where to store the resulting hash and	*/
+#define GEN_TYPE_SITE 2					/*	whether to conceal what is written on the console or not.			*/
+#define HASH_FIND_FAILED -1			//	Macro used for checking if a site existed in .siteprefs file.
 
 
 #ifndef USERIO_H
