@@ -150,8 +150,8 @@ void UserIO::genPassword(std::vector<PW>& list)
 	else
 	{
 		char maxLength = list[listPointer].getMaxLength();
-		if(list[listPointer].getCapFlag()) {decapLastLetter(password);}
 		if((unsigned char)maxLength < PASSWORD_HARD_MAX_LENGTH) {memset((password + maxLength), 0, (PASSWORD_HARD_MAX_LENGTH - maxLength));}
+		if(list[listPointer].getCapFlag()) {decapLastLetter(password);}
 		strToClipboard(password);
 	}
 	std::cout << "Password successfully added to your clipboard!" << std::endl;
