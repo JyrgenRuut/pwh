@@ -12,10 +12,10 @@ UserIO::~UserIO(){}
 void UserIO::genHash(int TYPE)
 {
 	char* destination;
-	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {printf("Enter your Master Password: "); destination = masterPasswordHash;}
-	else if(TYPE == GEN_TYPE_SITE) {printf("Enter site name: "); destination = siteHash;}
+	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {printf("Enter your Master Password: "); destination = masterPasswordHash; memset(masterPasswordHash, 0, HASH_STRING_SIZE);}
+	else if(TYPE == GEN_TYPE_SITE) {printf("Enter site name: "); destination = siteHash; memset(siteHash, 0, HASH_STRING_SIZE);}
 	char charIn;
-	char pw[51];
+	char pw[51] = { 0 };
 	int i = 0;
 	CSHA1 sha1;
 	
@@ -23,22 +23,21 @@ void UserIO::genHash(int TYPE)
 	while(charIn != 13 && i < 50)
 	{
 		pw[i] = charIn;
-		putchar('*');
+		if(TYPE == GEN_TYPE_MASTER_PASSWORD) {putchar('*');}
+		else {putchar(charIn);}
 		++i;
 		charIn = _getch();
 	}
-	pw[51] = '\0';
 	putchar('\n');
-	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {if(i == 0){printf("You decided to not enter a master password, this is\nconsidered unsafe! It is highly recommended\nthat you enter -pw and re-enter your\nMaster Password!\n");}}
+	
+	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {if(i == 0){printf("You decided to not enter a master password, this is\nconsidered unsafe! It is highly recommended\nthat you enter -psw and re-enter your\nMaster Password!\n");}}
 	sha1.Update((const unsigned char*)pw, strlen(pw));
 	sha1.Final();
 	sha1.GetHash((unsigned char*)destination);
 	sha1.~CSHA1();
-	printf("%s\n", destination);
 	
 	return;
 }
-
 
 void UserIO::printMenu() const
 {

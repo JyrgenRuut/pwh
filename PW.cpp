@@ -49,20 +49,11 @@ void PW::setMaxLength(char newMaxLength)
 }
 
 
-void PW::copyString(char* s1, char* s2)
+void PW::copyString(char* hash, char* src)
 {
-	bool sourceStringFinished = false;
-	for(int i = 0; i <= 20; ++i)
+	for(int i = 0; i < HASH_STRING_SIZE; ++i)
 	{
-		if(*(s2 + i) == '\0' && sourceStringFinished == false) {sourceStringFinished = true;}
-		if(!sourceStringFinished)
-		{
-			*(s1 + i) = *(s2 + i);
-		}
-		else
-		{
-			*(s1 + i) = '\0';
-		}
+		*(hash + i) = *(src + i);
 	}
-	*(s1 + HASH_STRING_SIZE) = '\0';
+	return;
 }
