@@ -1,14 +1,14 @@
 #include "UserIO.h"
 
-UserIO::UserIO()
+UserIO::UserIO()	//constructor
 {
 	memset(masterPasswordHash, 0, HASH_STRING_SIZE);
 	memset(siteHash, 0, HASH_STRING_SIZE);
 }
 
-UserIO::~UserIO(){}
+UserIO::~UserIO(){}		//deconstructor
 
-void UserIO::genHash(int TYPE)
+void UserIO::genHash(int TYPE)		//asks for password/site name, generates SHA1 hash into masterPasswordHash/siteHash, depending on whether @param is GEN_TYPE_MASTER_PASSWORD or GEN_TYPE_SITE
 {
 	char* destination;
 	if(TYPE == GEN_TYPE_MASTER_PASSWORD) {printf("Enter your Master Password: "); destination = masterPasswordHash; memset(masterPasswordHash, 0, HASH_STRING_SIZE);}
@@ -38,7 +38,7 @@ void UserIO::genHash(int TYPE)
 	return;
 }
 
-void UserIO::printMenu() const
+void UserIO::printMenu() const		//Prints out the menu choices
 {
 	std::cout << std::endl <<
 				"-gen : Generate password to clipboard for pasting"	<< std::endl <<
@@ -52,7 +52,7 @@ void UserIO::printMenu() const
 	return;
 }
 
-void UserIO::strToClipboard(char* str)
+void UserIO::strToClipboard(char* str)		//copies the string pointed to by @param into system clipboard
 {
 	OpenClipboard(0);
 	EmptyClipboard();	
@@ -70,7 +70,7 @@ void UserIO::strToClipboard(char* str)
 	return;
 }
 
-int UserIO::getCommand()
+int UserIO::getCommand()		//Receives input from user to determine what the user wishes to do; returns the command macro. 
 {
 	char input[5];
 	fgets(input, 5, stdin);
@@ -86,7 +86,7 @@ int UserIO::getCommand()
 	return 0;
 }
 
-void UserIO::populatePrefsList(std::vector<PW>& list)
+void UserIO::populatePrefsList(std::vector<PW>& list)		//loads stored site preferences from .siteprefs file
 {
 	//char byteIn;
 	int listCounter = 0;
@@ -94,14 +94,8 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	char capFlag;
 	char maxLength;
 	
-	FILE* fi = fopen(".siteprefs", "r");
-	if(fi == NULL)
-	{
-		printf("\nSite preferences file missing, creating a new one.\n");
-		FILE* fgen = fopen(".siteprefs", "w");
-		fclose(fgen);
-		return;
-	}
+	FILE* fi = fopen(".siteprefs", "r");	//open and/or check the .siteprefs file
+	if(fi == NULL) {return;}
 	
 	while(1)
 	{
@@ -109,13 +103,13 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 		if(feof(fi)) {break;}
 		fseek(fi, -1, SEEK_CUR);
 	
-		fread(tempHash, 1, HASH_STRING_SIZE, fi);
+		fread(tempHash, 1, HASH_STRING_SIZE, fi);		//reads in the hash, capital letter flag and max password length in repsective order
 		capFlag = fgetc(fi);
 		if(capFlag == EOF) {break;}
 		maxLength = fgetc(fi);
 		if(maxLength == EOF) {break;}
 		
-		PW element(tempHash, capFlag, maxLength);
+		PW element(tempHash, capFlag, maxLength);		//adds the new element to the list of preferences for later use
 		list.push_back(element);
 		++listCounter;
 	}
@@ -124,7 +118,7 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	
 }
 
-int UserIO::findHash(std::vector<PW>& list)
+int UserIO::findHash(std::vector<PW>& list)		//checks to see if a site has preferences saved previously; returns the position in the list or HASH_FIND_FAILED macro if the site was not found.
 {
 	for(int i = list.size() - 1; i >= 0; --i)
 	{
@@ -133,21 +127,21 @@ int UserIO::findHash(std::vector<PW>& list)
 	return HASH_FIND_FAILED;
 }
 
-void UserIO::genPassword(std::vector<PW>& list)
+void UserIO::genPassword(std::vector<PW>& list)		//generates the final password onto the clipboard based on master password hash and site hash, hashing them together.
 {
-	int listPointer = findHash(list);
+	int listPointer = findHash(list);				//see if the site entered has preferences saved
 	char password[(PASSWORD_HARD_MAX_LENGTH + 1)];
 	memset(password, 0, PASSWORD_HARD_MAX_LENGTH + 1);
-	CSHA1 sha1;
-	sha1.Update((const unsigned char*)masterPasswordHash, HASH_STRING_SIZE);
+	CSHA1 sha1;		//start of hashing
+	sha1.Update((const unsigned char*)masterPasswordHash, HASH_STRING_SIZE);		
 	sha1.Update((const unsigned char*)siteHash, HASH_STRING_SIZE);
 	sha1.Final();
 	sha1.ReportHash(password, CSHA1::REPORT_HEX_SHORT);
 	password[PASSWORD_HARD_MAX_LENGTH] = '\0';
-	sha1.~CSHA1();
+	sha1.~CSHA1();		//end of hashing
 	
-	if(listPointer == HASH_FIND_FAILED) {strToClipboard(password);}
-	else
+	if(listPointer == HASH_FIND_FAILED) {strToClipboard(password);}		//if site was not found in the preferences list, default to just copying the resulting string to clipboard
+	else 		//else use the site preferences to determine is and what the restrictions on the password are. 
 	{
 		char maxLength = list[listPointer].getMaxLength();
 		if((unsigned char)maxLength < PASSWORD_HARD_MAX_LENGTH) {memset((password + maxLength), 0, (PASSWORD_HARD_MAX_LENGTH - maxLength));}
@@ -159,7 +153,7 @@ void UserIO::genPassword(std::vector<PW>& list)
 	return;
 }
 
-void UserIO::decapLastLetter(char* str)
+void UserIO::decapLastLetter(char* str)		//decapitalizes the lastmost uppercase letter (all letters in the SHA1 digest are upper-case by default)
 {
 	for(int i = (strlen(str) - 1); i >= 0; --i)
 	{
@@ -168,14 +162,14 @@ void UserIO::decapLastLetter(char* str)
 	return;
 }
 
-void UserIO::deletePrefsListEntry(std::vector<PW>& list)
+void UserIO::deletePrefsListEntry(std::vector<PW>& list)		//erases a site preferences from list of preferences if the site has previously been added
 {
 	int toDelete = findHash(list);
 	if(toDelete != HASH_FIND_FAILED) {list.erase(list.begin() + toDelete);}
 	return;
 }
 
-void UserIO::savePrefs(std::vector<PW>& list)
+void UserIO::savePrefs(std::vector<PW>& list)		//stores the list of preferences in .siteprefs file
 {
 	FILE* fo = fopen(".siteprefs", "w");
 	for(int i = (list.size() - 1); i >= 0; --i)
@@ -188,7 +182,7 @@ void UserIO::savePrefs(std::vector<PW>& list)
 	return;
 }
 
-void UserIO::modifyPref(std::vector<PW>& list)
+void UserIO::modifyPref(std::vector<PW>& list)		//modifies an existing site's preferences or adds a new one if the site entered was new
 {
 	char newMaxLen, newCapFlag;
 	getPrefs(&newCapFlag, &newMaxLen);
@@ -208,7 +202,7 @@ void UserIO::modifyPref(std::vector<PW>& list)
 	return;
 }
 
-void UserIO::addPref(std::vector<PW>& list)
+void UserIO::addPref(std::vector<PW>& list)		//adds a new site hash and preferences to the list of preferences
 {
 	char capflag, maxlen;
 	int p;
@@ -227,7 +221,7 @@ void UserIO::addPref(std::vector<PW>& list)
 	return;
 }
 
-void UserIO::getPrefs(char* capflag, char* maxlen) 
+void UserIO::getPrefs(char* capflag, char* maxlen) 		//asks user for a site's preferences 
 {
 	int temp;
 	

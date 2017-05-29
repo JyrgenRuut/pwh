@@ -32,24 +32,25 @@ private:
 	char masterPasswordHash[HASH_STRING_SIZE];
 	char siteHash[HASH_STRING_SIZE];
 	
-	int findHash(std::vector<PW>&);
-	void strToClipboard(char* str);
-	void decapLastLetter(char*);
-	void getPrefs(char* capflag, char* maxlen);
+	int findHash(std::vector<PW>&);		//@param: list of PW objects to look through
+	void strToClipboard(char*);			//@param: pointer to string to be sent to the clipboard
+	void decapLastLetter(char*);		//@param: pointer to string from where the last letter will be de-capitalized
+	void getPrefs(char*, char*);		//@param1: pointer to where to save the entered "capital letter flag"; @param2: pointer to where to save the entered maximum password length
 	
 public:
+	//constructor and deconstructor
 	UserIO();
 	~UserIO();
 	
 	int getCommand();
-	void genHash(int TYPE);
-	void printMenu() const;
-	void genPassword(std::vector<PW>&);
-	void populatePrefsList(std::vector<PW>&);
-	void deletePrefsListEntry(std::vector<PW>&);
-	void savePrefs(std::vector<PW>&);
-	void modifyPref(std::vector<PW>&);
-	void addPref(std::vector<PW>&);
+	void genHash(int TYPE);							//@param TYPE: either macro GEN_TYPE_MASTER_PASSWORD or GEN_TYPE_SITE
+	void printMenu() const;	
+	void genPassword(std::vector<PW>&);				//@param: list where to look for a saved site hash
+	void populatePrefsList(std::vector<PW>&);		//@param: list where to save all the preferences in .siteprefs file
+	void deletePrefsListEntry(std::vector<PW>&);	//@param: list where to look for a saved site hash
+	void savePrefs(std::vector<PW>&);				//@param: list where to save the new site hash and preferences
+	void modifyPref(std::vector<PW>&);				//@param: list where to look for the site preferences to modify
+	void addPref(std::vector<PW>&);					//@param: list where to save a new site hash and preferences
 	
 };
 #endif
