@@ -149,11 +149,9 @@ void UserIO::genPassword(std::vector<PW>& list)
 	if(listPointer == HASH_FIND_FAILED) {strToClipboard(password);}
 	else
 	{
-		char needsCap = list[listPointer].getCapFlag();
 		char maxLength = list[listPointer].getMaxLength();
-		if(needsCap > 0) {decapLastLetter(password);}
+		if(list[listPointer].getCapFlag()) {decapLastLetter(password);}
 		if((unsigned char)maxLength < PASSWORD_HARD_MAX_LENGTH) {memset((password + maxLength), 0, (PASSWORD_HARD_MAX_LENGTH - maxLength));}
-		printf("%s\n", password);
 		strToClipboard(password);
 	}
 	std::cout << "Password successfully added to your clipboard!" << std::endl;
@@ -165,7 +163,7 @@ void UserIO::decapLastLetter(char* str)
 {
 	for(int i = (strlen(str) - 1); i >= 0; --i)
 	{
-		if(*(str + i) < 61) {*(str + i) += 0x20; break;}
+		if(*(str + i) >= 'A') {*(str + i) = *(str + i) + 0x20; break;}
 	}
 	return;
 }
