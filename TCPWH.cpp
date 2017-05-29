@@ -19,7 +19,7 @@ int main()
 	userIO.populatePrefsList(siteList);
 	userIO.genHash(GEN_TYPE_MASTER_PASSWORD);
 	userIO.printMenu();
-	while(1) //main program loop
+	while(1) 								//main program loop
 	{
 		switch(userIO.getCommand())
 		{
@@ -35,7 +35,6 @@ int main()
 				userIO.genHash(GEN_TYPE_MASTER_PASSWORD);
 				break;
 			case CMD_HLP: case CMD_MNU:
-				cout << endl << endl << endl;
 				userIO.printMenu();
 				break;
 			case CMD_MOD:

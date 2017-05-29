@@ -42,7 +42,8 @@ void UserIO::genHash(int TYPE)
 
 void UserIO::printMenu() const
 {
-	std::cout <<"-gen : Generate password to clipboard for pasting"	<< std::endl <<
+	std::cout << std::endl <<
+				"-gen : Generate password to clipboard for pasting"	<< std::endl <<
 				"-psw : Re-enter your Master Password." 			<< std::endl <<
 				"-add : Add a new site's preferences."				<< std::endl <<
 				"-del : Delete a site's preferences." 				<< std::endl <<
@@ -89,7 +90,7 @@ int UserIO::getCommand()
 
 void UserIO::populatePrefsList(std::vector<PW>& list)
 {
-	char byteIn;
+	//char byteIn;
 	int listCounter = 0;
 	char tempHash[HASH_STRING_SIZE];
 	char capFlag;
@@ -106,15 +107,10 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 	
 	while(1)
 	{
-		byteIn = fgetc(fi);
-		if(byteIn == EOF) {break;}
-		for(int i = 0; i <= HASH_STRING_SIZE; ++i)
-		{
-			tempHash[i] = byteIn;
-			byteIn = fgetc(fi);
-			if(byteIn == EOF) {goto END;}
-		}
-		capFlag = byteIn;
+		if(feof(fi)) {break;}
+		fread(tempHash, 1, HASH_STRING_SIZE, fi);
+		capFlag = fgetc(fi);
+		if(capFlag == EOF) {break;}
 		maxLength = fgetc(fi);
 		if(maxLength == EOF) {break;}
 		
@@ -122,14 +118,16 @@ void UserIO::populatePrefsList(std::vector<PW>& list)
 		list.push_back(element);
 		++listCounter;
 	}
-	END: return;
+	fclose(fi);
+	return;
+	
 }
 
 int UserIO::findHash(std::vector<PW>& list)
 {
 	for(int i = list.size(); i > 0; --i)
 	{
-		if(!strcmp(siteHash, list[i].getSiteHash())) {return i;}
+		if(strcmp(siteHash, list[i - 1].getSiteHash()) == 0) {return i;}
 	}
 	return 0;
 }
@@ -183,14 +181,11 @@ void UserIO::savePrefs(std::vector<PW>& list)
 	FILE* fo = fopen(".siteprefs", "w");
 	for(int i = (list.size() - 1); i >= 0; --i)
 	{
-		for(int j = 0; j < HASH_STRING_SIZE; ++j)
-		{
-			fputc(*(list[i].getSiteHash() + j), fo);
-		}
+		fwrite(list[i].getSiteHash(), 1, HASH_STRING_SIZE, fo);
 		fputc(list[i].getCapFlag(), fo);
 		fputc(list[i].getMaxLength(), fo);
 	}
-	
+	fclose(fo);
 	return;
 }
 
@@ -236,6 +231,7 @@ void UserIO::getPrefs(char* capflag, char* maxlen)
 								"If the max length is longer than 40 or length is not limited, enter 0"	<< std::endl <<
 								"Maximum password length: ";
 	std::cin >> temp;
+	fflush(stdin);
 	
 	if(temp == 0) {*maxlen = PASSWORD_HARD_MAX_LENGTH;}
 	else {*maxlen = (char)temp;}
